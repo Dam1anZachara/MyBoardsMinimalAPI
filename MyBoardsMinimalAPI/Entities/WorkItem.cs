@@ -8,7 +8,7 @@ namespace MyBoardsMinimalAPI.Entities
     {
         public int Id { get; set; }
         //[Required]
-        public string State { get; set; }
+        //public string State { get; set; }
         //[Column(TypeName = "varchar(200)")]
         public string Area { get; set; }
         //[Column("Iteration_Path")]
@@ -42,5 +42,9 @@ namespace MyBoardsMinimalAPI.Entities
 
         //relation many to many after .Net5
         public List<Tag> Tags { get; set; }
+
+        //relation one to many (State)
+        public State State { get; set; }
+        public int StateId { get; set; }
     }
 }

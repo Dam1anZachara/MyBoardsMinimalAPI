@@ -13,6 +13,7 @@ namespace MyBoardsMinimalAPI.Entities
         public DbSet<Tag> Tags { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Address> Addresses { get; set; }
+        public DbSet<State> States { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -71,6 +72,17 @@ namespace MyBoardsMinimalAPI.Entities
             //config relation many to many before .Net 5
             //modelBuilder.Entity<WorkItemTag>()
             //    .HasKey(c => new { c.TagId, c.WorkItemId });
+
+            modelBuilder.Entity<State>(eb =>
+            {
+                eb.Property(x => x.Name).IsRequired();
+                eb.Property(x => x.Name).HasMaxLength(50);
+
+                //relation one State has many WorkItems
+                eb.HasMany(w => w.WorkItems)
+                .WithOne(s => s.State)
+                .HasForeignKey(s => s.StateId);
+            });
         }
     }
 }
