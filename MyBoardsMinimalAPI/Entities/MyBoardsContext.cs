@@ -9,6 +9,9 @@ namespace MyBoardsMinimalAPI.Entities
 
         }
         public DbSet<WorkItem> WorkItems { get; set; }
+        public DbSet<Issue> Issues { get; set; }
+        public DbSet<Epic> Epics { get; set; }
+        public DbSet<Task> Tasks { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Tag> Tags { get; set; }
         public DbSet<Comment> Comments { get; set; }
@@ -17,15 +20,21 @@ namespace MyBoardsMinimalAPI.Entities
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Epic>()
+                .Property(wi => wi.EndDate).HasPrecision(3);
+            modelBuilder.Entity<Issue>()
+                .Property(wi => wi.Efford).HasColumnType("decimal(5,2)");
+            modelBuilder.Entity<Task>(tk =>
+            {
+                tk.Property(wi => wi.Activity).HasMaxLength(200);
+                tk.Property(wi => wi.RemainingWork).HasPrecision(14, 2);
+            });
+
             modelBuilder.Entity<WorkItem>(eb =>
             {
-                eb.Property(wi => wi.State).IsRequired();
+                //eb.Property(wi => wi.State).IsRequired();
                 eb.Property(wi => wi.Area).HasColumnType("varchar(200)");
                 eb.Property(wi => wi.IterationPath).HasColumnName("Iteration_Path");
-                eb.Property(wi => wi.Efford).HasColumnType("decimal(5,2)");
-                eb.Property(wi => wi.EndDate).HasPrecision(3);
-                eb.Property(wi => wi.Activity).HasMaxLength(200);
-                eb.Property(wi => wi.RemainingWork).HasPrecision(14, 2);
                 eb.Property(wi => wi.Priority).HasDefaultValue(1);
                 // relation one to many !Can be define start from Comment
                 eb.HasMany(w => w.Comments)
@@ -55,6 +64,10 @@ namespace MyBoardsMinimalAPI.Entities
                         wit.Property(x => x.PublicationDate).HasDefaultValueSql("getutcdate()");
                     }
                     );
+                // relation one State has many WorkItems
+                eb.HasOne(s => s.State)
+                .WithMany(w => w.WorkItems)
+                .HasForeignKey(w => w.StateId);
             });
 
             modelBuilder.Entity<Comment>(eb =>
@@ -75,13 +88,14 @@ namespace MyBoardsMinimalAPI.Entities
 
             modelBuilder.Entity<State>(eb =>
             {
-                eb.Property(x => x.Name).IsRequired();
-                eb.Property(x => x.Name).HasMaxLength(50);
+                eb.Property(x => x.Name)
+                .IsRequired()
+                .HasMaxLength(60);
 
                 //relation one State has many WorkItems
-                eb.HasMany(w => w.WorkItems)
-                .WithOne(s => s.State)
-                .HasForeignKey(s => s.StateId);
+                //eb.HasMany(w => w.WorkItems)
+                //.WithOne(s => s.State)
+                //.HasForeignKey(s => s.StateId);
             });
         }
     }

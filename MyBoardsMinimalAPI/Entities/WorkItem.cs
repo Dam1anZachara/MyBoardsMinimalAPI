@@ -4,7 +4,28 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MyBoardsMinimalAPI.Entities
 {
-    public class WorkItem
+    public class Epic : WorkItem
+    {
+        // Epic
+        public DateTime? StartDate { get; set; }
+        //[Precision(3)]
+        public DateTime? EndDate { get; set; }
+    }
+    public class Issue : WorkItem
+    {
+        // Issue
+        //[Column(TypeName = "decimal(5,2)")]
+        public decimal Efford { get; set; }
+    }
+    public class Task : WorkItem
+    {
+        // Task
+        //[MaxLength(200)]
+        public string Activity { get; set; }
+        //[Precision(14,2)]
+        public decimal RemainingWork { get; set; }
+    }
+    public abstract class WorkItem
     {
         public int Id { get; set; }
         //[Required]
@@ -14,21 +35,7 @@ namespace MyBoardsMinimalAPI.Entities
         //[Column("Iteration_Path")]
         public string IterationPath { get; set; }
         public int Priority { get; set; }
-        // Epic
-        public DateTime? StartDate { get; set; }
-        //[Precision(3)]
-        public DateTime? EndDate { get; set; }
-        // Issue
-        //[Column(TypeName = "decimal(5,2)")]
-        public decimal Efford { get; set; }
-        // Tast
-        //[MaxLength(200)]
-        public string Activity { get; set; }
-        //[Precision(14,2)]
-        public decimal RemainingWork { get; set; }
 
-
-        public string Type { get; set; }
         
         //relation one to many (One WorkItem can have many Comments)
         public List<Comment> Comments { get; set; } = new List<Comment>(); // can be IEnumerable
