@@ -73,7 +73,12 @@ namespace MyBoardsMinimalAPI.Entities
             modelBuilder.Entity<Comment>(eb =>
             {
                 eb.Property(x => x.CreatedDate).HasDefaultValueSql("getutcdate()");
-                eb.Property(x => x.UpdatedDate).ValueGeneratedOnUpdate(); 
+                eb.Property(x => x.UpdatedDate).ValueGeneratedOnUpdate();
+
+                //rel One to many (User - Comments)
+                eb.HasOne(u => u.User)
+                .WithMany(c => c.Comments)
+                .HasForeignKey(c => c.AuthorId);
             });
 
             //config relation 1 to 1 (User - Address)

@@ -12,6 +12,7 @@
         //rel one to many (One User with many WorkItems)
         public List<WorkItem> WorkItems { get; set; } = new List<WorkItem>();
 
-
+        //rel one to many (One User has many Comments)
+        public List<Comment> Comments { get; set; } = new List<Comment>();
     }
 }
