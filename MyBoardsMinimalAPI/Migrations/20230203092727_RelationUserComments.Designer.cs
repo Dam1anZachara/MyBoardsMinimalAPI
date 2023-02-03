@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyBoardsMinimalAPI.Entities;
 
@@ -11,9 +12,11 @@ using MyBoardsMinimalAPI.Entities;
 namespace MyBoardsMinimalAPI.Migrations
 {
     [DbContext(typeof(MyBoardsContext))]
-    partial class MyBoardsContextModelSnapshot : ModelSnapshot
+    [Migration("20230203092727_RelationUserComments")]
+    partial class RelationUserComments
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -102,23 +105,6 @@ namespace MyBoardsMinimalAPI.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("States");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "To Do"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Doing"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "Done"
-                        });
                 });
 
             modelBuilder.Entity("MyBoardsMinimalAPI.Entities.Tag", b =>
@@ -135,23 +121,6 @@ namespace MyBoardsMinimalAPI.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Tags");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Value = "Web"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Value = "UI"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Value = "Desktop"
-                        });
                 });
 
             modelBuilder.Entity("MyBoardsMinimalAPI.Entities.User", b =>

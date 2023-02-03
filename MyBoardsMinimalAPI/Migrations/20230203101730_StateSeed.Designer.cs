@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyBoardsMinimalAPI.Entities;
 
@@ -11,9 +12,11 @@ using MyBoardsMinimalAPI.Entities;
 namespace MyBoardsMinimalAPI.Migrations
 {
     [DbContext(typeof(MyBoardsContext))]
-    partial class MyBoardsContextModelSnapshot : ModelSnapshot
+    [Migration("20230203101730_StateSeed")]
+    partial class StateSeed
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -135,23 +138,6 @@ namespace MyBoardsMinimalAPI.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Tags");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Value = "Web"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Value = "UI"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Value = "Desktop"
-                        });
                 });
 
             modelBuilder.Entity("MyBoardsMinimalAPI.Entities.User", b =>

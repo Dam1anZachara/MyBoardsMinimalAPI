@@ -76,9 +76,10 @@ namespace MyBoardsMinimalAPI.Entities
                 eb.Property(x => x.UpdatedDate).ValueGeneratedOnUpdate();
 
                 //rel One to many (User - Comments)
-                eb.HasOne(u => u.User)
-                .WithMany(c => c.Comments)
-                .HasForeignKey(c => c.AuthorId);
+                eb.HasOne(c => c.User)
+                .WithMany(u => u.Comments)
+                .HasForeignKey(c => c.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
             });
 
             //config relation 1 to 1 (User - Address)
@@ -102,6 +103,18 @@ namespace MyBoardsMinimalAPI.Entities
                 //.WithOne(s => s.State)
                 //.HasForeignKey(s => s.StateId);
             });
+
+            //Seed data
+            modelBuilder.Entity<State>()
+                .HasData(new State() { Id = 1, Name = "To Do" },
+                new State() { Id = 2, Name = "Doing" },
+                new State() { Id = 3, Name = "Done" });
+
+            modelBuilder.Entity<Tag>()
+                .HasData(new Tag() { Id = 1, Value = "Web" },
+                new Tag() { Id = 2, Value = "UI" },
+                new Tag() { Id = 3, Value = "Desktop" });
+
         }
     }
 }
