@@ -1,6 +1,8 @@
+using Microsoft.AspNetCore.Http.Json;
 using Microsoft.EntityFrameworkCore;
 using MyBoardsMinimalAPI.Entities;
 using System.Runtime.CompilerServices;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +10,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.Configure<JsonOptions>(options =>
+{
+    options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+});
 
 builder.Services.AddDbContext<MyBoardsContext>(
     option => option.UseSqlServer(builder.Configuration.GetConnectionString("MyBoardsConnectionString"))
@@ -111,27 +117,113 @@ app.MapGet("data", async (MyBoardsContext db) =>
     //FirstOrDefaultAsync();
     //return userTopComments;
     //lub
-    var authorsCommentCounts = await db.Comments
-    .GroupBy(c => c.UserId).Select(g => new { g.Key, Count = g.Count() }).ToListAsync();
-    var topAuthor = authorsCommentCounts
-    .First(a => a.Count == authorsCommentCounts.Max(acc => acc.Count));
-    var userDetails = db.Users.First(u => u.Id == topAuthor.Key);
-    return new { userDetails, commentCount = topAuthor.Count };
+    //var authorsCommentCounts = await db.Comments
+    //.GroupBy(c => c.UserId).Select(g => new { g.Key, Count = g.Count() }).ToListAsync();
+    //var topAuthor = authorsCommentCounts
+    //.First(a => a.Count == authorsCommentCounts.Max(acc => acc.Count));
+    //var userDetails = db.Users.First(u => u.Id == topAuthor.Key);
+    //return new { userDetails, commentCount = topAuthor.Count };
+
+    //var user = await db.Users
+    //.Include(u => u.Comments).ThenInclude(w => w.WorkItem)
+    //.Include(a => a.Address)
+    //.FirstAsync(u => u.Id == Guid.Parse("68366DBE-0809-490F-CC1D-08DA10AB0E61"));
+    //var userComments = await db.Comments.Where(c => c.UserId == user.Id).ToListAsync();
+
+    //var user = await db.Users
+    //.FirstAsync(u => u.Id == Guid.Parse("D00D8059-8977-4E5F-CBD2-08DA10AB0E61"));
+    //var entries1 = db.ChangeTracker.Entries();
+    //user.Email = "test@test.com";
+    //var entries2 = db.ChangeTracker.Entries();
+    //db.SaveChanges();
+    //return user;
+
+    var states = db.States
+    .AsNoTracking()
+    .ToList();
+    var entries = db.ChangeTracker.Entries();
+
+    return states;
 });
 
 app.MapPost("update", async (MyBoardsContext db) =>
 {
     Epic epic = await db.Epics.FirstAsync(epic => epic.Id == 1);
 
-    var onHoldState = await db.States.FirstAsync(a => a.Name == "On Hold");
+    var rejectedState = await db.States.FirstAsync(a => a.Name == "Rejected");
     //epic.Area = "Updateed area";
     //epic.Priority = 1;
     //epic.StartDate = DateTime.Now;
-    epic.StateId = onHoldState.Id;
+    epic.State = rejectedState;
 
     await db.SaveChangesAsync();
 
     return epic;
+});
+
+app.MapPost("create", async (MyBoardsContext db) =>
+{
+    //Tag mvcTag = new Tag()
+    //{
+    //    Value = "MVC"
+    //};
+    //Tag aspTag = new Tag()
+    //{
+    //    Value = "ASP"
+    //};
+    //var tags = new List<Tag>() { mvcTag, aspTag };
+    //await db.Tags.AddRangeAsync(tags);
+    //await db.SaveChangesAsync();
+
+    //return tags;
+
+    var address = new Address()
+    {
+        Id = Guid.Parse("b323dd7c-776a-4cfc-a92a-12df154b4a2c"),
+        City = "Kraków",
+        Country = "Poland",
+        Street = "D³uga"
+    };
+
+    var user = new User()
+    {
+        Email = "user@test.com",
+        FullName = "Test User",
+        Address = address,
+    };
+
+    db.Users.Add(user);
+    await db.SaveChangesAsync();
+
+    return user;
+});
+
+app.MapDelete("delete", async (MyBoardsContext db) =>
+{
+    //var workItemTags = await db.WorkItemTag.Where(c => c.WorkItemId == 12).ToListAsync();
+    //db.WorkItemTag.RemoveRange(workItemTags);
+    //var workItem = await db.WorkItems.FirstAsync(c => c.Id == 16);
+    //db.RemoveRange(workItem);
+
+    //var user = await db.Users
+    //.Include(u => u.Comments)
+    //.FirstAsync(u => u.Id == Guid.Parse("4EBB526D-2196-41E1-CBDA-08DA10AB0E61"));
+
+    //var userComments = db.Comments.Where(c => c.UserId == user.Id).ToList();
+    //db.RemoveRange(userComments);
+    //await db.SaveChangesAsync();
+    //db.Users.Remove(user);
+    //await db.SaveChangesAsync();
+
+    var workItem = new Epic()
+    {
+        Id = 2
+    };
+    var entry = db.Attach(workItem);
+    entry.State = EntityState.Deleted;
+    db.SaveChanges();
+
+    return workItem;
 });
 
 app.Run();

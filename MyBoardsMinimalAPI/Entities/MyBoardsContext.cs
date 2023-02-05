@@ -17,6 +17,7 @@ namespace MyBoardsMinimalAPI.Entities
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Address> Addresses { get; set; }
         public DbSet<State> States { get; set; }
+        public DbSet<WorkItemTag> WorkItemTag { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -79,7 +80,7 @@ namespace MyBoardsMinimalAPI.Entities
                 eb.HasOne(c => c.User)
                 .WithMany(u => u.Comments)
                 .HasForeignKey(c => c.UserId)
-                .OnDelete(DeleteBehavior.NoAction);
+                .OnDelete(DeleteBehavior.ClientCascade);
             });
 
             //config relation 1 to 1 (User - Address)
