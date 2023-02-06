@@ -10,6 +10,6 @@
         //public List<WorkItemTag> WorkItemTags { get; set; } = new List<WorkItemTag>();
 
         //relation many to many after .Net5
-        public List<WorkItem> WorkItems { get; set; }
+        public virtual List<WorkItem> WorkItems { get; set; } //virtual allows for lazy loading
     }
 }

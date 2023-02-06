@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyBoardsMinimalAPI", "MyBoardsMinimalAPI\MyBoardsMinimalAPI.csproj", "{96D99B1E-9B4E-4434-8DEA-BF369C3A07CC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyBoardsMinimalAPI", "MyBoardsMinimalAPI\MyBoardsMinimalAPI.csproj", "{96D99B1E-9B4E-4434-8DEA-BF369C3A07CC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyBoardsBenchmark", "MyBoardsBenchmark\MyBoardsBenchmark.csproj", "{38EC65DC-E49C-4FEB-95B0-D9CB20350555}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{96D99B1E-9B4E-4434-8DEA-BF369C3A07CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{96D99B1E-9B4E-4434-8DEA-BF369C3A07CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{96D99B1E-9B4E-4434-8DEA-BF369C3A07CC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38EC65DC-E49C-4FEB-95B0-D9CB20350555}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38EC65DC-E49C-4FEB-95B0-D9CB20350555}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38EC65DC-E49C-4FEB-95B0-D9CB20350555}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38EC65DC-E49C-4FEB-95B0-D9CB20350555}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

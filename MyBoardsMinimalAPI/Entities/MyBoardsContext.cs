@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MyBoardsMinimalAPI.Entities.ViewModels;
 
 namespace MyBoardsMinimalAPI.Entities
 {
@@ -18,6 +19,7 @@ namespace MyBoardsMinimalAPI.Entities
         public DbSet<Address> Addresses { get; set; }
         public DbSet<State> States { get; set; }
         public DbSet<WorkItemTag> WorkItemTag { get; set; }
+        public DbSet<TopAuthor> ViewTopAuthors { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -116,6 +118,19 @@ namespace MyBoardsMinimalAPI.Entities
                 new Tag() { Id = 2, Value = "UI" },
                 new Tag() { Id = 3, Value = "Desktop" });
 
+            modelBuilder.Entity<TopAuthor>(eb =>
+            {
+                eb.ToView("View_TopAuthors");
+                eb.HasNoKey();
+            });
+
+            //Owned types
+            modelBuilder.Entity<Address>()
+                .OwnsOne(a => a.Coordinate, cmb =>
+                {
+                    cmb.Property(c => c.Latitude).HasPrecision(18, 7);
+                    cmb.Property(c => c.Longitude).HasPrecision(18, 7);
+                });
         }
     }
 }

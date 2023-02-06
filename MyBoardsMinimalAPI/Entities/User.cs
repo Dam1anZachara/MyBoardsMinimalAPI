@@ -7,12 +7,12 @@
         public string Email { get; set; }
 
         //relation one to one (One adress with one user)
-        public Address Address { get; set; }
+        public virtual Address Address { get; set; } // virual allows for lazy loading
 
-        //rel one to many (One User with many WorkItems)
-        public List<WorkItem> WorkItems { get; set; } = new List<WorkItem>();
+        //rel one to many (One User with many WorkItems) 
+        public virtual List<WorkItem> WorkItems { get; set; } = new List<WorkItem>(); // virual allows for lazy loading
 
         //rel one to many (One User has many Comments)
-        public List<Comment> Comments { get; set; } = new List<Comment>();
+        public virtual List<Comment> Comments { get; set; } = new List<Comment>(); // virual allows for lazy loading
     }
 }

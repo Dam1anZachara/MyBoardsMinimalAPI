@@ -38,20 +38,20 @@ namespace MyBoardsMinimalAPI.Entities
 
         
         //relation one to many (One WorkItem can have many Comments)
-        public List<Comment> Comments { get; set; } = new List<Comment>(); // can be IEnumerable
+        public virtual List<Comment> Comments { get; set; } = new List<Comment>(); // can be IEnumerable
 
         //relation one to Many (One User has relation with many WorkItems)
-        public User Author { get; set; }
+        public virtual User Author { get; set; }
         public Guid AuthorId { get; set; }
 
         //relation many to many before .Net5
         //public List<WorkItemTag> WorkItemTags { get; set; } = new List<WorkItemTag>();
 
         //relation many to many after .Net5
-        public List<Tag> Tags { get; set; }
+        public virtual List<Tag> Tags { get; set; }
 
         //relation one to many (State)
-        public State State { get; set; }
+        public virtual State State { get; set; }
         public int StateId { get; set; }
     }
 }

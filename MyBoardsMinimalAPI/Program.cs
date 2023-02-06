@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.EntityFrameworkCore;
+using MyBoardsMinimalAPI.Dto;
 using MyBoardsMinimalAPI.Entities;
+using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
 
@@ -16,7 +18,9 @@ builder.Services.Configure<JsonOptions>(options =>
 });
 
 builder.Services.AddDbContext<MyBoardsContext>(
-    option => option.UseSqlServer(builder.Configuration.GetConnectionString("MyBoardsConnectionString"))
+    option => option
+    //.UseLazyLoadingProxies() //allows lazy loading
+    .UseSqlServer(builder.Configuration.GetConnectionString("MyBoardsConnectionString"))
     );
 
 var app = builder.Build();
@@ -79,6 +83,45 @@ if (!tags.Where(t => t.Value == "Service").Any())
     dbContext.SaveChanges();    
 }
 
+app.MapGet("pagination", async (MyBoardsContext db) =>
+{
+    //user input
+    var filter = "a";
+    string sortBy = "FullName"; // "FullName", "Email", null
+    bool sortByDescending = false;
+    int pageNumber = 1;
+    int pageSize = 10;
+    //
+
+    var query = db.Users
+    .Where(u => filter == null ||
+    (u.Email.Contains(filter.ToLower()) ||
+    u.FullName.Contains(filter.ToLower())));
+
+    var totalCount = query.Count();
+
+    if (sortBy != null)
+    {
+        var columnsSelector = new Dictionary<string, Expression<Func<User, object>>>
+        {
+            { nameof(User.Email), user => user.Email },
+            { nameof(User.FullName), user => user.FullName },
+        };
+
+        var sortByExpression = columnsSelector[sortBy];
+
+        query = sortByDescending
+            ? query.OrderByDescending(sortByExpression)
+            : query.OrderBy(sortByExpression);
+    }
+    var result = query.Skip(pageSize * (pageNumber - 1))
+    .Take(pageSize)
+    .ToList();
+
+    var pagedResult = new PagedResult<User>(result, totalCount, pageSize, pageNumber);
+    return pagedResult;
+});
+
 app.MapGet("data", async (MyBoardsContext db) =>
 {
     //var tags = db.Tags.ToList();
@@ -138,27 +181,53 @@ app.MapGet("data", async (MyBoardsContext db) =>
     //db.SaveChanges();
     //return user;
 
-    var states = db.States
-    .AsNoTracking()
-    .ToList();
-    var entries = db.ChangeTracker.Entries();
+    //var states = db.States
+    //.AsNoTracking()
+    //.ToList();
+    //var entries = db.ChangeTracker.Entries();
+    //return states;
 
-    return states;
+    //var minWorkItemsCount = "85";
+    //var states = db.States
+    //.FromSqlInterpolated($"SELECT s.Id, s.Name\r\nFROM States s\r\nJOIN WorkItems wi on wi.StateId = s.Id\r\nGROUP BY s.Id, s.Name\r\nHAVING COUNT(*) > {minWorkItemsCount}").ToList();
+    //return states;
+
+    //var topAuthors = db.ViewTopAuthors.ToList();
+    //return topAuthors;
+
+    //var topAuthors = db.Addresses.Where(a => a.Coordinate.Latitude > 10);
+    //return topAuthors;
+
+    //LAZY LOADING
+    var withAddress = true;
+
+    var user = db.Users
+    .First(u => u.Id == Guid.Parse("EBFBD70D-AC83-4D08-CBC6-08DA10AB0E61"));
+    if (withAddress)
+    {
+        var result = new { FullName = user.FullName, Address = $"{user.Address.Street} {user.Address.City}" };
+        return result;
+    }
+    return new { FullName = user.FullName, Address = "-" };
 });
 
 app.MapPost("update", async (MyBoardsContext db) =>
 {
-    Epic epic = await db.Epics.FirstAsync(epic => epic.Id == 1);
+    //Epic epic = await db.Epics.FirstAsync(epic => epic.Id == 1);
 
-    var rejectedState = await db.States.FirstAsync(a => a.Name == "Rejected");
-    //epic.Area = "Updateed area";
-    //epic.Priority = 1;
-    //epic.StartDate = DateTime.Now;
-    epic.State = rejectedState;
+    //var rejectedState = await db.States.FirstAsync(a => a.Name == "Rejected");
+    ////epic.Area = "Updateed area";
+    ////epic.Priority = 1;
+    ////epic.StartDate = DateTime.Now;
+    //epic.State = rejectedState;
 
-    await db.SaveChangesAsync();
+    //await db.SaveChangesAsync();
+    //return epic;
 
-    return epic;
+    //db.Database.ExecuteSqlRaw(@"
+    //  UPDATE Comments
+    //  SET UpdatedDate = GETDATE()
+    //  WHERE UserId = '2073271A-3DFC-4A63-CBE5-08DA10AB0E61'");
 });
 
 app.MapPost("create", async (MyBoardsContext db) =>

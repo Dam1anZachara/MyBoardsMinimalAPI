@@ -1,4 +1,6 @@
-﻿namespace MyBoardsMinimalAPI.Entities
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace MyBoardsMinimalAPI.Entities
 {
     public class Address
     {
@@ -7,9 +9,17 @@
         public string City { get; set; }
         public string Street { get; set; }
         public string PostalCode { get; set; }
-        public User User { get; set; }
+        public virtual User User { get; set; } // virtual allows for LazyLoading
         public Guid UserId { get; set; }
 
         //User - Address rel 1 do 1
+
+        public Coordinate Coordinate { get; set; }
+    }
+    //[Owned] //owned types
+    public class Coordinate
+    {
+        public decimal? Longitude { get; set; }
+        public decimal? Latitude { get; set; }
     }
 }
