@@ -48,7 +48,7 @@ namespace MyBoardsMinimalAPI.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("Addresses");
+                    b.ToTable("Addresses", (string)null);
                 });
 
             modelBuilder.Entity("MyBoardsMinimalAPI.Entities.Comment", b =>
@@ -83,7 +83,7 @@ namespace MyBoardsMinimalAPI.Migrations
 
                     b.HasIndex("WorkItemId");
 
-                    b.ToTable("Comments");
+                    b.ToTable("Comments", (string)null);
                 });
 
             modelBuilder.Entity("MyBoardsMinimalAPI.Entities.State", b =>
@@ -101,7 +101,7 @@ namespace MyBoardsMinimalAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("States");
+                    b.ToTable("States", (string)null);
 
                     b.HasData(
                         new
@@ -134,7 +134,7 @@ namespace MyBoardsMinimalAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Tags");
+                    b.ToTable("Tags", (string)null);
 
                     b.HasData(
                         new
@@ -168,7 +168,7 @@ namespace MyBoardsMinimalAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("MyBoardsMinimalAPI.Entities.ViewModels.TopAuthor", b =>
@@ -220,7 +220,7 @@ namespace MyBoardsMinimalAPI.Migrations
 
                     b.HasIndex("StateId");
 
-                    b.ToTable("WorkItems");
+                    b.ToTable("WorkItems", (string)null);
 
                     b.HasDiscriminator<string>("Discriminator").HasValue("WorkItem");
 
@@ -244,7 +244,7 @@ namespace MyBoardsMinimalAPI.Migrations
 
                     b.HasIndex("WorkItemId");
 
-                    b.ToTable("WorkItemTag");
+                    b.ToTable("WorkItemTag", (string)null);
                 });
 
             modelBuilder.Entity("MyBoardsMinimalAPI.Entities.Epic", b =>
@@ -294,7 +294,7 @@ namespace MyBoardsMinimalAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsOne("MyBoardsMinimalAPI.Entities.Coordinate", "Coordinate", b1 =>
+                    b.OwnsOne("MyBoardsMinimalAPI.Entities.Address.Coordinate#MyBoardsMinimalAPI.Entities.Coordinate", "Coordinate", b1 =>
                         {
                             b1.Property<Guid>("AddressId")
                                 .HasColumnType("uniqueidentifier");
@@ -309,7 +309,7 @@ namespace MyBoardsMinimalAPI.Migrations
 
                             b1.HasKey("AddressId");
 
-                            b1.ToTable("Addresses");
+                            b1.ToTable("Addresses", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("AddressId");

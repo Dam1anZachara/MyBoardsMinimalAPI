@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MyBoardsMinimalAPI.Entities.Configurations;
 using MyBoardsMinimalAPI.Entities.ViewModels;
 
 namespace MyBoardsMinimalAPI.Entities
@@ -23,114 +24,8 @@ namespace MyBoardsMinimalAPI.Entities
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Epic>()
-                .Property(wi => wi.EndDate).HasPrecision(3);
-            modelBuilder.Entity<Issue>()
-                .Property(wi => wi.Efford).HasColumnType("decimal(5,2)");
-            modelBuilder.Entity<Task>(tk =>
-            {
-                tk.Property(wi => wi.Activity).HasMaxLength(200);
-                tk.Property(wi => wi.RemainingWork).HasPrecision(14, 2);
-            });
-
-            modelBuilder.Entity<WorkItem>(eb =>
-            {
-                //eb.Property(wi => wi.State).IsRequired();
-                eb.Property(wi => wi.Area).HasColumnType("varchar(200)");
-                eb.Property(wi => wi.IterationPath).HasColumnName("Iteration_Path");
-                eb.Property(wi => wi.Priority).HasDefaultValue(1);
-                // relation one to many !Can be define start from Comment
-                eb.HasMany(w => w.Comments)
-                .WithOne(c => c.WorkItem)
-                .HasForeignKey(c => c.WorkItemId);
-                // relation one to many !One User has many WorkItems
-                eb.HasOne(w => w.Author)
-                .WithMany(u => u.WorkItems)
-                .HasForeignKey(a => a.AuthorId);
-
-                // relation many to many after .Net 5
-                eb.HasMany(w => w.Tags)
-                .WithMany(t => t.WorkItems)
-                // Jeśli chcemy wykorzystać tabelę pośredniczącą z dodatkowymi property np data połączenia encji
-                .UsingEntity<WorkItemTag>(
-                    w => w.HasOne(wit => wit.Tag)
-                    .WithMany()
-                    .HasForeignKey(wit => wit.TagId),
-
-                    w => w.HasOne(wit => wit.WorkItem)
-                    .WithMany()
-                    .HasForeignKey(wit => wit.WorkItemId),
-
-                    wit =>
-                    {
-                        wit.HasKey(x => new { x.TagId, x.WorkItemId });
-                        wit.Property(x => x.PublicationDate).HasDefaultValueSql("getutcdate()");
-                    }
-                    );
-                // relation one State has many WorkItems
-                eb.HasOne(s => s.State)
-                .WithMany(w => w.WorkItems)
-                .HasForeignKey(w => w.StateId);
-            });
-
-            modelBuilder.Entity<Comment>(eb =>
-            {
-                eb.Property(x => x.CreatedDate).HasDefaultValueSql("getutcdate()");
-                eb.Property(x => x.UpdatedDate).ValueGeneratedOnUpdate();
-
-                //rel One to many (User - Comments)
-                eb.HasOne(c => c.User)
-                .WithMany(u => u.Comments)
-                .HasForeignKey(c => c.UserId)
-                .OnDelete(DeleteBehavior.ClientCascade);
-            });
-
-            //config relation 1 to 1 (User - Address)
-            modelBuilder.Entity<User>()
-                .HasOne(u => u.Address)
-                .WithOne(a => a.User)
-                .HasForeignKey<Address>(a => a.UserId);
-            //
-            //config relation many to many before .Net 5
-            //modelBuilder.Entity<WorkItemTag>()
-            //    .HasKey(c => new { c.TagId, c.WorkItemId });
-
-            modelBuilder.Entity<State>(eb =>
-            {
-                eb.Property(x => x.Name)
-                .IsRequired()
-                .HasMaxLength(60);
-
-                //relation one State has many WorkItems
-                //eb.HasMany(w => w.WorkItems)
-                //.WithOne(s => s.State)
-                //.HasForeignKey(s => s.StateId);
-            });
-
-            //Seed data
-            modelBuilder.Entity<State>()
-                .HasData(new State() { Id = 1, Name = "To Do" },
-                new State() { Id = 2, Name = "Doing" },
-                new State() { Id = 3, Name = "Done" });
-
-            modelBuilder.Entity<Tag>()
-                .HasData(new Tag() { Id = 1, Value = "Web" },
-                new Tag() { Id = 2, Value = "UI" },
-                new Tag() { Id = 3, Value = "Desktop" });
-
-            modelBuilder.Entity<TopAuthor>(eb =>
-            {
-                eb.ToView("View_TopAuthors");
-                eb.HasNoKey();
-            });
-
-            //Owned types
-            modelBuilder.Entity<Address>()
-                .OwnsOne(a => a.Coordinate, cmb =>
-                {
-                    cmb.Property(c => c.Latitude).HasPrecision(18, 7);
-                    cmb.Property(c => c.Longitude).HasPrecision(18, 7);
-                });
+            //configuration all types which implement interface IEntityTypeConfiguration
+            modelBuilder.ApplyConfigurationsFromAssembly(this.GetType().Assembly); 
         }
     }
 }
