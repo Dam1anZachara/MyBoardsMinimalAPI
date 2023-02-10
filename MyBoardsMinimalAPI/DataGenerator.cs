@@ -8,7 +8,11 @@ namespace MyBoardsMinimalAPI
         public static void Seed(MyBoardsContext context)
         {
             var locale = "pl";
+
+            Randomizer.Seed = new Random(911); // generacja tych samych danych za każdym razem
+
             var addressGenerator = new Faker<Address>(locale)
+                //.StrictMode(true)// sprawia że zostanie nałożona validacja czy spełniamy warunki na każdym property 
                 .RuleFor(a => a.City, f => f.Address.City())
                 .RuleFor(a => a.Country, f => f.Address.Country())
                 .RuleFor(a => a.PostalCode, f => f.Address.ZipCode())
