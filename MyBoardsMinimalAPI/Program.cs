@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.EntityFrameworkCore;
+using MyBoardsMinimalAPI;
 using MyBoardsMinimalAPI.Dto;
 using MyBoardsMinimalAPI.Entities;
 using System.Linq.Expressions;
@@ -40,6 +41,9 @@ if (pendingMigrations.Any())
 {
     dbContext.Database.Migrate();
 }
+
+//DataGenerator
+DataGenerator.Seed(dbContext);
 
 // customowa logika seedowania
 var users = dbContext.Users.ToList();
@@ -199,16 +203,41 @@ app.MapGet("data", async (MyBoardsContext db) =>
     //return topAuthors;
 
     //LAZY LOADING
-    var withAddress = true;
+    //var withAddress = true;
 
-    var user = db.Users
-    .First(u => u.Id == Guid.Parse("EBFBD70D-AC83-4D08-CBC6-08DA10AB0E61"));
-    if (withAddress)
+    //var user = db.Users
+    //.First(u => u.Id == Guid.Parse("EBFBD70D-AC83-4D08-CBC6-08DA10AB0E61"));
+    //if (withAddress)
+    //{
+    //    var result = new { FullName = user.FullName, Address = $"{user.Address.Street} {user.Address.City}" };
+    //    return result;
+    //}
+    //return new { FullName = user.FullName, Address = "-" };
+
+    //var usersComments = await db.Users
+    //.Include(u => u.Address)
+    //.Include(u => u.Comments)
+    //.Where(u => u.Address.Country == "Albania")
+    //.SelectMany(u => u.Comments)
+    //.Select(c => c.Message)
+    //.ToListAsync();
+    //return usersComments;
+
+    //problem n+1
+    var users = await db.Users
+    .Include(u => u.Address)
+    .Include(u => u.Comments)
+    .Where(u => u.Address.Country == "Albania")
+    .Include(u => u.Comments)
+    .ToListAsync();
+
+    foreach (var user in users)
     {
-        var result = new { FullName = user.FullName, Address = $"{user.Address.Street} {user.Address.City}" };
-        return result;
+        foreach (var comments in user.Comments)
+        {
+            //
+        }
     }
-    return new { FullName = user.FullName, Address = "-" };
 });
 
 app.MapPost("update", async (MyBoardsContext db) =>

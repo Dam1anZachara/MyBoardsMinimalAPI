@@ -16,6 +16,8 @@ namespace MyBoardsMinimalAPI.Entities.Configurations
             //config relation many to many before .Net 5
             //modelBuilder.Entity<WorkItemTag>()
             //    .HasKey(c => new { c.TagId, c.WorkItemId });
+
+            builder.HasIndex(u => new {u.Email, u.FullName});
         }
     }
 }
